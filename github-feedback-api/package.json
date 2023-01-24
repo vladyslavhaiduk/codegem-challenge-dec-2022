@@ -22,7 +22,7 @@
     "lint": "eslint . --ext .js",
     "docker": "docker-compose up --build",
     "docker:dev": "docker-compose -f docker-compose.dev.yml down --volumes && docker-compose -f docker-compose.dev.yml up -d",
-    "test":  "jest",
+    "test": "jest",
     "seed": "node seed.js"
   },
   "devDependencies": {
