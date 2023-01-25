@@ -7,19 +7,19 @@ export function emojiAndColorForSentiment(sentiment) {
         case 1:
         case 2:
             return {
-                color: '#DC3047',
-                emoji: '😔',
+                color: "#DC3047",
+                emoji: "😔",
             };
         case 3:
             return {
-                color: '#FFC74A',
-                emoji: '😐'
+                color: "#FFC74A",
+                emoji: "😐",
             };
         case 4:
         case 5:
             return {
-                color: '#46C895',
-                emoji: '😊'
+                color: "#46C895",
+                emoji: "😊",
             };
         default:
             return {};
@@ -29,16 +29,20 @@ export function emojiAndColorForSentiment(sentiment) {
 export function textForSentiment(sentiment) {
     switch (sentiment) {
         default:
-            return '';
+            return "";
         case 1:
-            return 'Very Positive';
+            return "Very Positive";
         case 2:
-            return 'Negative';
+            return "Negative";
         case 3:
-            return 'Meh';
+            return "Meh";
         case 4:
-            return 'Positive';
+            return "Positive";
         case 5:
-            return 'Very Positive';
+            return "Very Positive";
     }
+}
+
+export function bucketedSentimentValue(value) {
+    return Math.min(Math.max(Math.round(value), 1), 5);
 }
