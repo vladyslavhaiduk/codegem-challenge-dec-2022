@@ -6,11 +6,15 @@ class FeedbackMoodRepository {
         this.tableName = "feedback_mood";
     }
 
+    // test
     async saveMoodsForFeedback(feedbackId, moodIds) {
-        return this.dbProvider.addMany(this.tableName, moodIds.map(moodId => ({
-            mood_id: moodId,
-            feedback_id: feedbackId,
-        })));
+        return this.dbProvider.addMany(
+            this.tableName,
+            moodIds.map((moodId) => ({
+                mood_id: moodId,
+                feedback_id: feedbackId,
+            }))
+        );
     }
 
     async list() {

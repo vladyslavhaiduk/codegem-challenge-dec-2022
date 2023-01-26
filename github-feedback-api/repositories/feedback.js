@@ -1,6 +1,12 @@
 const DatabaseFactory = require("../providers/database");
 const FeedbackModel = require("../models/feedback");
-const {differenceInBusinessDays, formatISO, differenceInDays, differenceInCalendarDays, isWeekend} = require("date-fns");
+const {
+    differenceInBusinessDays,
+    formatISO,
+    differenceInDays,
+    differenceInCalendarDays,
+    isWeekend,
+} = require("date-fns");
 
 class FeedbackRepository {
     constructor() {
@@ -9,20 +15,23 @@ class FeedbackRepository {
         FeedbackModel.knex(this.dbProvider.client);
     }
 
+    // test
     async getTodaysCheckInsCount() {
         const knexClient = this.dbProvider.client;
 
-        return FeedbackModel
-            .query()
-            .where('created_at', '>=', knexClient.raw(`current_date`))
-            .where('created_at', '<', knexClient.raw(`current_date + interval '1 day'`))
+        return FeedbackModel.query()
+            .where("created_at", ">=", knexClient.raw(`current_date`))
+            .where(
+                "created_at",
+                "<",
+                knexClient.raw(`current_date + interval '1 day'`)
+            )
             .resultSize();
     }
 
     async getLongestStreak() {
-        const feedback = await FeedbackModel
-            .query()
-            .orderBy('day_of_streak', 'desc')
+        const feedback = await FeedbackModel.query()
+            .orderBy("day_of_streak", "desc")
             .first();
 
         if (feedback) {
@@ -33,9 +42,8 @@ class FeedbackRepository {
     }
 
     async getCurrentStreak() {
-        const feedback = await FeedbackModel
-            .query()
-            .orderBy('created_at', 'desc')
+        const feedback = await FeedbackModel.query()
+            .orderBy("created_at", "desc")
             .first();
 
         if (feedback) {
@@ -46,27 +54,33 @@ class FeedbackRepository {
     }
 
     async getAllFeedbacks() {
-        return FeedbackModel
-            .query()
+        return FeedbackModel.query()
             .select(
-                'feedback.*',
-                FeedbackModel.relatedQuery('moods')
-                    .avg('sentiment_value')
-                    .as('average_sentiment'))
-            .withGraphJoined('[moods, tags]');
+                "feedback.*",
+                FeedbackModel.relatedQuery("moods")
+                    .avg("sentiment_value")
+                    .as("average_sentiment")
+            )
+            .withGraphJoined("[moods, tags]");
     }
 
     async getFeedback(id) {
-        return this.dbProvider.query(this.tableName).where('id', id).first();
+        return this.dbProvider.query(this.tableName).where("id", id).first();
     }
 
-    async saveFeedback({source, feedback, createdAt = new Date()}) {
-        const latestFeedback = await this.dbProvider.query(this.tableName).orderBy('created_at', 'desc').first();
+    // test ->  (test the streak feature)
+    async saveFeedback({ source, feedback, createdAt = new Date() }) {
+        const latestFeedback = await this.dbProvider
+            .query(this.tableName)
+            .orderBy("created_at", "desc")
+            .first();
 
         let dayOfStreak = 1;
         if (latestFeedback) {
             const lastFeedbackDate = latestFeedback.created_at;
-            const diffInBusinessDays = Math.abs(differenceInBusinessDays(lastFeedbackDate, createdAt));
+            const diffInBusinessDays = Math.abs(
+                differenceInBusinessDays(lastFeedbackDate, createdAt)
+            );
 
             if (isWeekend(createdAt)) {
                 dayOfStreak = latestFeedback.day_of_streak;
@@ -89,7 +103,7 @@ class FeedbackRepository {
             feedback,
             day_of_streak: dayOfStreak,
             source,
-            created_at: formatISO(createdAt)
+            created_at: formatISO(createdAt),
         });
 
         return id;
